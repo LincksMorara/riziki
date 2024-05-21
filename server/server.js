@@ -11,10 +11,10 @@ const bodyParser = require('body-parser');
 const dotenv = require('dotenv');
 
 // Import the auth routes
-const authRoutes = require('./routes/auth');
+const authRoutes = require('./routes/authRoutes');
 
 // Import the user routes
-const userRoutes = require('./routes/user');
+const userRoutes = require('./routes/userRoutes');
 
 // Import the function to connect to the database
 const connectDB = require('./config/db');
