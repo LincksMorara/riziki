@@ -59,29 +59,44 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Similar to the register form, but for the login form
-    if (loginForm) {
-        loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-            const password = document.getElementById('password').value;
+   // Similar to the register form, but for the login form
+if (loginForm) {
+    loginForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const email = document.getElementById('email').value;
+        const password = document.getElementById('password').value;
 
-            const response = await fetch('/api/login', {
+        try {
+            const response = await fetch('http://localhost:3000/api/auth/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
             });
-
-            const data = await response.json();
-            // If the login was successful, store the token in local storage and redirect to the dashboard
-            if (response.status === 200) {
+        
+            // If the response is ok, parse the data
+            if (response.ok) {
+                const data = await response.json();
                 localStorage.setItem('token', data.token);
                 window.location.href = 'dashboard.html';
+            } else if (response.status === 401) {
+                // If the status code is 401, show a custom message
+                alert('Login failed. Please check your email and password.');
             } else {
-                alert(data.message);
+                // If the response is not ok, try to parse the data and show an alert
+                try {
+                    const data = await response.json();
+                    alert(data.message || 'Login failed. Please check your email and password.');
+                } catch (error) {
+                    // If an error occurred when parsing the data, show a default message
+                    alert('Login failed. Please check your email and password.');
+                }
             }
-        });
-    }
+        } catch (error) {
+            console.error('An error occurred:', error);
+            alert('Failed to login. Please check your network connection and try again.');
+        }
+    });
+}
 
     // Similar to the above, but for the password reset request form
     if (resetForm) {
