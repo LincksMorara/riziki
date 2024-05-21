@@ -10,8 +10,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault();
-            const firstname = document.getElementById('firstname').value;
-            const lastname = document.getElementById('lastname').value;
+            const username = document.getElementById('username').value;
             const email = document.getElementById('email').value;
             const phone = document.getElementById('phone').value;
             const password = document.getElementById('password').value;
@@ -22,10 +21,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            const response = await fetch('/api/register', { // Sending request to '/api/register'
+            const response = await fetch('/api/register', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ firstname, lastname, email, phone, password }),
+                body: JSON.stringify({ username, email, phone, password }),
             });
 
             const data = await response.json();
@@ -43,7 +42,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
-            const response = await fetch('/api/login', { // Sending request to '/api/login'
+            const response = await fetch('/api/login', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password }),
@@ -65,7 +64,7 @@ document.addEventListener('DOMContentLoaded', () => {
             e.preventDefault();
             const email = document.getElementById('email').value;
 
-            const response = await fetch('/api/forgotpassword', { // Sending request to '/api/forgotpassword'
+            const response = await fetch('/api/forgotpassword', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email }),
@@ -73,7 +72,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
             const data = await response.json();
             console.log('Reset response:', data); // Debugging line
-            
+
             if (response.status === 200) {
                 alert('Please check your email for the reset code');
                 window.location.href = 'forgotPassword.html';
@@ -83,15 +82,22 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Forgot Password Form Handling
     if (forgotPasswordForm) {
-        forgotPasswordForm.addEventListener('submit', (e) => {
+        forgotPasswordForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const resetCode = document.getElementById('resetCode').value;
+            const email = document.getElementById('email').value; // Ensure email is captured
 
-            // Simulate checking reset code
-            if (resetCode === "123456") { // Simulated correct code
-                window.location.href = "resetPassword.html";
+            const response = await fetch('/api/validateresettoken', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ email, resetCode }),
+            });
+
+            const data = await response.json();
+            if (response.status === 200) {
+                window.location.href = 'resetPassword.html';
             } else {
-                alert("Invalid reset code");
+                alert('Invalid reset code');
             }
         });
     }
@@ -103,12 +109,11 @@ document.addEventListener('DOMContentLoaded', () => {
             const newPassword = document.getElementById('newPassword').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
 
-            // Check if passwords match
             if (newPassword === confirmPassword) {
-                alert("Password reset successfully");
+                alert('Password reset successfully');
                 window.location.href = 'login.html';
             } else {
-                alert("Passwords do not match");
+                alert('Passwords do not match');
             }
         });
     }
