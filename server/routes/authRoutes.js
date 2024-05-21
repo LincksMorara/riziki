@@ -2,7 +2,7 @@
 const express = require('express');
 
 // Destructure the register and login functions from the authController module
-const { register, login, forgotPassword, resetPassword } = require('../controllers/authController');
+const { register, login, forgotPassword, validateResetToken, resetPassword } = require('../controllers/authController');
 
 // Create a new router object
 const router = express.Router();
@@ -18,6 +18,10 @@ router.post('/login', login);
 //Define route for forgot password
 //takes email
 router.post('/forgotpassword', forgotPassword);
+
+//Define route for validating reset token
+router.post('/validateresettoken', validateResetToken); 
+
 
 //Define route for reset password
 //takes in new password
