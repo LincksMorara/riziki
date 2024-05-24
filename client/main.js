@@ -4,7 +4,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const registerForm = document.getElementById('registerForm');
     const loginForm = document.getElementById('loginForm');
     const resetForm = document.getElementById('resetForm');
-    const forgotPasswordForm = document.getElementById('forgotPasswordForm');
+    //const forgotPasswordForm = document.getElementById('forgotPasswordForm');
     const newPasswordForm = document.getElementById('newPasswordForm');
     const logoutBtn = document.getElementById('logoutBtn');
 
@@ -103,45 +103,62 @@ if (loginForm) {
         resetForm.addEventListener('submit', async (e) => {
             e.preventDefault();
             const email = document.getElementById('email').value;
-
-            const response = await fetch('/api/forgotpassword', {
+    
+            const response = await fetch('http://localhost:3000/api/auth/forgotpassword', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email }),
             });
-
+    
             const data = await response.json();
             // Log the response data for debugging
             console.log('Reset response:', data);
-
+    
             if (response.status === 200) {
+                // Store the email in localStorage
+                localStorage.setItem('email', email);
+    
                 alert('Please check your email for the reset code');
                 window.location.href = 'forgotPassword.html';
             }
         });
     }
+    
+    // Get the form and the reset code input
+const forgotPasswordForm = document.querySelector('#forgotPasswordForm');
+const resetCodeInput = document.querySelector('#resetCode');
 
-    // For the form where the user enters the reset code they received
-    if (forgotPasswordForm) {
-        forgotPasswordForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const resetCode = document.getElementById('resetCode').value;
-            const email = document.getElementById('email').value;
+if (forgotPasswordForm && resetCodeInput) {
+    forgotPasswordForm.addEventListener('submit', async (e) => {
+        e.preventDefault();
 
-            const response = await fetch('/api/validateresettoken', {
+        const resetToken = resetCodeInput.value; // Changed from resetCode
+        console.log(`Reset Token: ${resetToken}`);
+
+        const email = localStorage.getItem('email');
+        console.log(`Email: ${email}`);
+
+        try {
+            const response = await fetch('http://localhost:3000/api/auth/validateresettoken', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, resetCode }),
+                body: JSON.stringify({ email, resetToken }),
             });
 
-            const data = await response.json();
-            if (response.status === 200) {
-                window.location.href = 'resetPassword.html';
-            } else {
-                alert('Invalid reset code');
+            if (!response.ok) {
+                throw new Error(`Server responded with status ${response.status}`);
             }
-        });
-    }
+
+            const data = await response.json();
+            console.log(`Response: ${JSON.stringify(data)}`);
+
+            window.location.href = 'resetPassword.html';
+        } catch (error) {
+            console.error('An error occurred:', error);
+            alert('Invalid reset token or an error occurred. Check the console for more details.');
+        }
+    });
+}
 
     // For the form where the user enters their new password
     if (newPasswordForm) {

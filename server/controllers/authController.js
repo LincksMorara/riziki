@@ -120,10 +120,14 @@ exports.verifyResetToken = async (req, res) => {
 };
 
 // Validate reset token
-// Define an asynchronous function to validate the reset token
 exports.validateResetToken = async (req, res) => {
     // Destructure the resetToken from the request body
     const { resetToken } = req.body;
+
+    // Check if resetToken is defined
+    if (!resetToken) {
+        return res.status(400).json({ success: false, error: 'No reset token provided' });
+    }
 
     // Hash the resetToken using the SHA256 algorithm
     const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
