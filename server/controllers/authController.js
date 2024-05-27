@@ -155,31 +155,38 @@ exports.validateResetToken = async (req, res) => {
 
 // Reset password
 exports.resetPassword = async (req, res) => {
-    const { token, newPassword } = req.body;
+    const { resetToken, newPassword } = req.body; // Get resetToken and newPassword from the body
 
-    const resetPasswordToken = crypto.createHash('sha256').update(token).digest('hex');
+    // Hash the resetToken using the SHA256 algorithm
+    const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
 
     try {
+        // Try to find a user with the matching reset token that has not expired
         const user = await User.findOne({
-            resetPasswordToken,
+            resetPasswordToken: hashedToken,
             resetPasswordExpire: { $gt: Date.now() },
         });
 
         if (!user) {
+            // If no user is found, send a 400 response with an error message
             return res.status(400).json({ success: false, error: 'Invalid or expired token' });
         }
 
+        // Update the user's password and reset the reset token fields
         user.password = newPassword;
         user.resetPasswordToken = undefined;
         user.resetPasswordExpire = undefined;
         await user.save();
 
+        // Sign a new JWT for the user
         const jwtToken = jwt.sign({ id: user._id, role: user.role }, process.env.JWT_SECRET, {
             expiresIn: '1d',
         });
 
+        // Send a success response with the new JWT
         res.status(200).json({ success: true, token: jwtToken });
     } catch (error) {
+        // If an error occurred, send a 500 response with the error message
         res.status(500).json({ success: false, error: error.message });
     }
 };

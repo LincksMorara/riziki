@@ -25,7 +25,7 @@ router.post('/validateresettoken', validateResetToken);
 
 //Define route for reset password
 //takes in new password
-router.put('/resetpassword/:resetToken', resetPassword);
+router.put('/resetpassword', resetPassword);
 
 // Export the router object
 module.exports = router;
