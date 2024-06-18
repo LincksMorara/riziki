@@ -6,11 +6,13 @@ document.addEventListener('DOMContentLoaded', () => {
     const resetForm = document.getElementById('resetForm');
     const newPasswordForm = document.querySelector('#newPasswordForm');
     const logoutBtn = document.getElementById('logoutBtn');
+    const verifyForm = document.getElementById('verifyForm');
 
     // If the register form exists, add an event listener for form submission
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault(); // Prevent the form from submitting normally
+
             // Get the input values from the form
             const firstName = document.getElementById('firstname').value;
             const lastName = document.getElementById('lastname').value;
@@ -34,26 +36,58 @@ document.addEventListener('DOMContentLoaded', () => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ firstName, lastName, phoneNumber, username, email, password, role }),
                 });
-            
+
                 // Parse the response data
                 const data = await response.json();
-            
+
                 // Check if the response was successful
                 if (response.ok) {
-                    // Show the response message
-                    alert(data.message);
-                    // If the registration was successful, redirect to the login page
+                    alert(data.message); // Show the response message
+
+                    // If the registration was successful, redirect to the verification page
                     if (response.status === 201) {
-                        window.location.href = 'login.html';
+                        window.location.href = `verifyEmail.html?userId=${data.userId}`;
                     }
                 } else {
-                    // If the server responded with an error, show the error message
-                    alert('Error: ' + data.message);
+                    alert('Error: ' + data.message); // Show the error message if the server responded with an error
                 }
             } catch (error) {
-                // If an error occurred while sending the request, log the error and show an error message
-                console.error('An error occurred:', error);
+                console.error('An error occurred:', error); // Log the error
                 alert('An error occurred while trying to register. Please try again.');
+            }
+        });
+    }
+
+    // Check if the verification form exists
+    if (verifyForm) {
+        verifyForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent the form from submitting normally
+
+
+            // Get the token value from the form
+            const token = document.getElementById('token').value;
+
+            try {
+                // Send a POST request to the verify email API endpoint with the user ID and token
+                const response = await fetch('http://localhost:3000/api/auth/verifyemail', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ token }),
+                });
+
+                // Parse the response data
+                const data = await response.json();
+
+                // Check if the response was successful
+                if (response.ok) {
+                    alert(data.message); // Show the response message
+                    window.location.href = 'login.html'; // Redirect to the login page
+                } else {
+                    alert('Error: ' + data.error); // Show the error message if the server responded with an error
+                }
+            } catch (error) {
+                console.error('An error occurred:', error); // Log the error
+                alert('An error occurred while trying to verify your email. Please try again.');
             }
         });
     }
@@ -62,6 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
             e.preventDefault(); // Prevent the form from submitting normally
+
             // Get the input values from the form
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
@@ -73,7 +108,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password }),
                 });
-            
+
                 // If the response is ok, parse the data
                 if (response.ok) {
                     const data = await response.json();
@@ -107,7 +142,7 @@ document.addEventListener('DOMContentLoaded', () => {
         resetForm.addEventListener('submit', async (e) => {
             e.preventDefault(); // Prevent the form from submitting normally
             const email = document.getElementById('email').value; // Get the input value from the form
-    
+
             try {
                 // Send a POST request to the forgot password API endpoint with the email
                 const response = await fetch('http://localhost:3000/api/auth/forgotpassword', {
@@ -115,15 +150,15 @@ document.addEventListener('DOMContentLoaded', () => {
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email }),
                 });
-    
+
                 const data = await response.json(); // Parse the response data
                 // Log the response data for debugging
                 console.log('Reset response:', data);
-    
+
                 if (response.status === 200) {
                     // Store the email in local storage
                     localStorage.setItem('email', email);
-    
+
                     // Show an alert and redirect to the forgot password page
                     alert('Please check your email for the reset code');
                     window.location.href = 'forgotPassword.html';
@@ -139,92 +174,91 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-
     // Get the forgot password form and the reset code input elements
-const forgotPasswordForm = document.querySelector('#forgotPasswordForm');
-const resetCodeInput = document.querySelector('#resetCode');
+    const forgotPasswordForm = document.querySelector('#forgotPasswordForm');
+    const resetCodeInput = document.querySelector('#resetCode');
 
-// If the forgot password form and reset code input exist, add an event listener for form submission
-if (forgotPasswordForm && resetCodeInput) {
-    forgotPasswordForm.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Prevent the form from submitting normally
-        const resetToken = resetCodeInput.value; // Get the input value from the form
+    // If the forgot password form and reset code input exist, add an event listener for form submission
+    if (forgotPasswordForm && resetCodeInput) {
+        forgotPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent the form from submitting normally
+            const resetToken = resetCodeInput.value; // Get the input value from the form
 
-        try {
-            // Send a POST request to the validate reset token API endpoint with the reset token
-            const response = await fetch('http://localhost:3000/api/auth/validateresettoken', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ resetToken }), // Removed email from the body as it's not needed
-            });
-
-            if (!response.ok) {
-                throw new Error(`Server responded with status ${response.status}`);
-            }
-
-            const data = await response.json(); // Parse the response data
-            console.log(`Response: ${JSON.stringify(data)}`);
-
-            // Check if the response indicates success
-            if (data.success) {
-                // Store the reset token in local storage
-                localStorage.setItem('resetToken', resetToken);
-
-                // Redirect to the reset password page
-                window.location.href = 'resetPassword.html';
-            } else {
-                // Show an error message if the token is invalid or expired
-                alert('Invalid or expired reset token.');
-            }
-        } catch (error) {
-            // If an error occurred while sending the request, log the error and show an error message
-            console.error('An error occurred:', error);
-            alert('An error occurred. Check the console for more details.');
-        }
-    });
-}
-
-    // If the new password form exists, add an event listener for form submission
-if (newPasswordForm) {
-    newPasswordForm.addEventListener('submit', async (e) => {
-        e.preventDefault(); // Prevent the form from submitting normally
-        const newPassword = document.getElementById('newPassword').value; // Get the input value from the form
-        const confirmPassword = document.getElementById('confirmPassword').value; // Get the input value from the form
-        const resetToken = localStorage.getItem('resetToken'); // Retrieve the reset token from local storage
-
-        console.log('Reset Token:', resetToken); // Log the reset token for debugging
-        console.log('New Password:', newPassword); // Log the new password for debugging
-
-        if (newPassword === confirmPassword) {
             try {
-                // Send a PUT request to the reset password API endpoint with the new password and reset token
-                const response = await fetch('http://localhost:3000/api/auth/resetpassword', {
-                    method: 'PUT',
+                // Send a POST request to the validate reset token API endpoint with the reset token
+                const response = await fetch('http://localhost:3000/api/auth/validateresettoken', {
+                    method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ resetToken, newPassword }), // Send resetToken and newPassword in the body
+                    body: JSON.stringify({ resetToken }), // Removed email from the body as it's not needed
                 });
 
-                console.log('Response Status:', response.status); // Log the response status
+                if (!response.ok) {
+                    throw new Error(`Server responded with status ${response.status}`);
+                }
 
                 const data = await response.json(); // Parse the response data
-                console.log('Response Data:', data); // Log the response data for debugging
+                console.log(`Response: ${JSON.stringify(data)}`);
 
-                if (response.ok && data.success) {
-                    alert('Password reset successfully');
-                    window.location.href = 'login.html';
+                // Check if the response indicates success
+                if (data.success) {
+                    // Store the reset token in local storage
+                    localStorage.setItem('resetToken', resetToken);
+
+                    // Redirect to the reset password page
+                    window.location.href = 'resetPassword.html';
                 } else {
-                    alert('Error: ' + data.error);
+                    // Show an error message if the token is invalid or expired
+                    alert('Invalid or expired reset token.');
                 }
             } catch (error) {
                 // If an error occurred while sending the request, log the error and show an error message
                 console.error('An error occurred:', error);
-                alert('Failed to reset password. Please try again.');
+                alert('An error occurred. Check the console for more details.');
             }
-        } else {
-            alert('Passwords do not match');
-        }
-    });
-}
+        });
+    }
+
+    // If the new password form exists, add an event listener for form submission
+    if (newPasswordForm) {
+        newPasswordForm.addEventListener('submit', async (e) => {
+            e.preventDefault(); // Prevent the form from submitting normally
+            const newPassword = document.getElementById('newPassword').value; // Get the input value from the form
+            const confirmPassword = document.getElementById('confirmPassword').value; // Get the input value from the form
+            const resetToken = localStorage.getItem('resetToken'); // Retrieve the reset token from local storage
+
+            console.log('Reset Token:', resetToken); // Log the reset token for debugging
+            console.log('New Password:', newPassword); // Log the new password for debugging
+
+            if (newPassword === confirmPassword) {
+                try {
+                    // Send a PUT request to the reset password API endpoint with the new password and reset token
+                    const response = await fetch('http://localhost:3000/api/auth/resetpassword', {
+                        method: 'PUT',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify({ resetToken, newPassword }), // Send resetToken and newPassword in the body
+                    });
+
+                    console.log('Response Status:', response.status); // Log the response status
+
+                    const data = await response.json(); // Parse the response data
+                    console.log('Response Data:', data); // Log the response data for debugging
+
+                    if (response.ok && data.success) {
+                        alert('Password reset successfully');
+                        window.location.href = 'login.html';
+                    } else {
+                        alert('Error: ' + data.error);
+                    }
+                } catch (error) {
+                    // If an error occurred while sending the request, log the error and show an error message
+                    console.error('An error occurred:', error);
+                    alert('Failed to reset password. Please try again.');
+                }
+            } else {
+                alert('Passwords do not match');
+            }
+        });
+    }
 
     // If the logout button exists, add an event listener for click events
     if (logoutBtn) {

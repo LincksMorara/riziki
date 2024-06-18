@@ -32,7 +32,7 @@ exports.protect = async (req, res, next) => {
         next();
     } catch (error) {
         // If the token is not valid, return a 401 status code (Unauthorized) and an error message
-        res.status(401).json({ success: false, error: 'Not authorized, token failed' });
+        res.status(403).json({ success: false, error: 'invalid token, unauthorized' });
     }
 };
 

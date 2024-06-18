@@ -12,7 +12,7 @@ const router = express.Router();
 
 // Define a GET route for '/profile' that uses the protect middleware and the getUserProfile function as its handlers
 // Define a PUT route for '/profile' that uses the protect middleware and the updateUserProfile function as its handlers
-router.route('/profile').get(protect, getUserProfile).put(protect, updateUserProfile);
+router.route('/profile').get( getUserProfile).put(protect, updateUserProfile);
 
 // Export the router object
 module.exports = router;

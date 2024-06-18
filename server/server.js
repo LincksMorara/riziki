@@ -5,6 +5,8 @@ const dotenv = require('dotenv');
 const cors = require('cors');
 const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
+const inventoryRoutes = require('./routes/inventoryRoutes'); // Import inventoryRoutes
+const reportRoutes = require('./routes/reportRoutes'); // Import reportRoutes
 const connectDB = require('./config/db');
 
 // Load environment variables from .env file
@@ -35,6 +37,9 @@ app.use('/api/auth', authRoutes);
 
 // Use the user routes for requests to /api/user
 app.use('/api/user', userRoutes);
+
+//user the inventoryRoutes for requests to /api/inventory
+app.use('/api/inventory', inventoryRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
