@@ -13,10 +13,14 @@ const inventorySchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    pricePerKg: {
+    unitSize: {
         type: Number,
         required: true
     },
+    batches: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Batch'
+    }],
     createdAt: {
         type: Date,
         default: Date.now

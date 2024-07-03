@@ -2,69 +2,141 @@ const Inventory = require('../models/Inventory');
 const Batch = require('../models/Batch');
 const Sale = require('../models/Sale');
 
-// Add Inventory item
-exports.addInventory = async (req, res) => {
-    const { name, category, quantity, pricePerKg } = req.body;
-    
-    try {
-        const newInventory = new Inventory({
-            name,
-            category,
-            quantity,
-            pricePerKg
-        });
-
-        const savedInventory = await newInventory.save();
-        res.status(201).json({ success: true, data: savedInventory });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-};
-
-// Add a new batch to an inventory item
-exports.addBatch = async (req, res) => {
-    const { inventoryName, quantity, supplier, pricePerKg, purchaseDate } = req.body;
+// Controller function to add an inventory item with its initial batch or just a batch if the inventory item already exists
+exports.addInventoryWithBatch = async (req, res) => {
+    const { name, category, batchQuantity, supplier, batchPricePerKg, purchaseDate, unitSize } = req.body;
 
     try {
-        const inventory = await Inventory.findOne({name: inventoryName});
+        let inventory = await Inventory.findOne({ name, category });
+
         if (!inventory) {
-            return res.status(404).json({ success: false, error: 'Inventory item not found' });
+            inventory = new Inventory({
+                name,
+                category,
+                quantity: batchQuantity,
+                unitSize // Ensure unitSize is included here only when creating a new inventory item
+            });
+
+            inventory = await inventory.save();
+        } else {
+            // Update the quantity of the existing inventory item
+            inventory.quantity += batchQuantity;
+            await inventory.save();
         }
 
-        // Extract the inventory ID from the found inventory object
-        const inventoryId = inventory._id;
-
         const newBatch = new Batch({
-            inventory: inventoryId, // Use the extracted inventory ID here
-            quantity,
+            inventoryItem: inventory._id,
+            quantity: batchQuantity,
             supplier,
-            pricePerKg,
-            purchaseDate
+            pricePerKg: batchPricePerKg,
+            date: purchaseDate
         });
 
         const savedBatch = await newBatch.save();
-        inventory.batches.push(savedBatch._id);
-        await inventory.save();
 
-        res.status(201).json({ success: true, data: savedBatch });
+        res.status(201).json({ success: true, data: { inventory, batch: savedBatch } });
     } catch (error) {
         res.status(500).json({ success: false, error: error.message });
     }
 };
 
-// Get inventory details
+
+
+// Get Inventory Details
 exports.getInventoryDetails = async (req, res) => {
     try {
-        const inventory = await Inventory.findOne({ name: req.params.name }).populate('batches');
+        // Fetch all inventory items from the database
+        const inventoryItems = await Inventory.find({}, 'name category quantity');
+
+        // Respond with the inventory items
+        res.status(200).json({ success: true, data: inventoryItems });
+    } catch (error) {
+        // Handle any errors that occur during the process
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
+// Get Batch Details of a Specific Inventory Item
+exports.getBatchDetails = async (req, res) => {
+    const { name, category } = req.body;
+
+    try {
+        // Find the inventory item by name and category
+        const inventory = await Inventory.findOne({ name, category });
+
+        // If the inventory item does not exist, respond with an error
         if (!inventory) {
             return res.status(404).json({ success: false, error: 'Inventory item not found' });
         }
 
-        res.status(200).json({ success: true, data: inventory });
+        // Find all batches associated with the inventory item
+        const batches = await Batch.find({ inventoryItem: inventory._id });
+
+        // Respond with the batch details
+        res.status(200).json({ success: true, data: batches });
     } catch (error) {
+        // Handle any errors that occur during the process
         res.status(500).json({ success: false, error: error.message });
     }
 };
+
+// Delete items from a batch of an inventory item
+exports.deleteItemsFromBatch = async (req, res) => {
+    const { name, category, batchId, quantityToDelete } = req.body;
+
+    try {
+        // Find the inventory item by name and category
+        const inventory = await Inventory.findOne({ name, category });
+
+        if (!inventory) {
+            return res.status(404).json({ success: false, error: 'Inventory item not found' });
+        }
+
+        // Retrieve batches associated with the inventory item
+        const batches = await Batch.find({ inventoryItem: inventory._id }).sort({ date: 1 });
+
+        if (!batches || batches.length === 0) {
+            return res.status(404).json({ success: false, error: 'No batches found for the inventory item' });
+        }
+
+        // Delete items from batches starting from the oldest
+        let itemsToDelete = quantityToDelete;
+        let batchIndex = 0;
+
+        while (itemsToDelete > 0 && batchIndex < batches.length) {
+            const batch = batches[batchIndex];
+            const itemsInBatch = batch.quantity;
+
+            if (itemsInBatch >= itemsToDelete) {
+                // If the batch has enough items to delete, update it and stop
+                batch.quantity -= itemsToDelete;
+                itemsToDelete = 0; // All items deleted
+            } else {
+                // If the batch doesn't have enough items, delete all from this batch and move to the next
+                itemsToDelete -= itemsInBatch;
+                batch.quantity = 0;
+            }
+
+            await batch.save();
+            batchIndex++;
+        }
+
+        // Remove empty batches if any (batches with quantity === 0)
+        await Batch.deleteMany({ quantity: 0 });
+
+        // Update the inventory item quantity after deletion
+        const remainingQuantity = batches.reduce((total, batch) => total + batch.quantity, 0);
+        inventory.quantity = remainingQuantity;
+        await inventory.save();
+
+        // Respond with the updated inventory item and remaining batches
+        res.status(200).json({ success: true, data: { inventory, batches } });
+    } catch (error) {
+        // Handle any errors that occur during the process
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
 
 // Update inventory item
 exports.updateInventory = async (req, res) => {

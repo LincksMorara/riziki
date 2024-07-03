@@ -7,6 +7,7 @@ const authRoutes = require('./routes/authRoutes');
 const userRoutes = require('./routes/userRoutes');
 const inventoryRoutes = require('./routes/inventoryRoutes'); // Import inventoryRoutes
 const reportRoutes = require('./routes/reportRoutes'); // Import reportRoutes
+const salesRoutes = require('./routes/salesRoutes'); // Import salesRoutes
 const connectDB = require('./config/db');
 
 // Load environment variables from .env file
@@ -40,6 +41,9 @@ app.use('/api/user', userRoutes);
 
 //user the inventoryRoutes for requests to /api/inventory
 app.use('/api/inventory', inventoryRoutes);
+
+//use the salesRoutes for requests to /api/sales
+app.use('/api/sales', salesRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

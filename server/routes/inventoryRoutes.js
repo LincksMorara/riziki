@@ -12,13 +12,17 @@ const {
     getAllSales,
     getSalesByDateRange,
     getTopBuyers,
-    getTopSellers
+    getTopSellers,
+    addInventoryWithBatch,
+    getBatchDetails,
+    deleteItemsFromBatch
 } = require('../controllers/inventoryController');
 
 // Routes for Inventory
-router.post('/add', protect, admin, addInventory);
-router.post('/batch', protect, admin, addBatch);
-router.get('/:name', protect, getInventoryDetails);
+router.post('/', addInventoryWithBatch);
+router.get('/', getInventoryDetails);
+router.post('/batches', getBatchDetails);
+router.delete('/batches', deleteItemsFromBatch);
 router.put('/:name', protect, admin, updateInventory);
 router.delete('/:name', protect, admin, deleteInventory);
 router.get('/', protect, getAllInventory);

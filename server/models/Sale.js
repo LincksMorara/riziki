@@ -1,13 +1,14 @@
 const mongoose = require('mongoose');
+const Schema = mongoose.Schema;
 
-const saleSchema = new mongoose.Schema({
+const saleSchema = new Schema({
     user: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'User',
         required: true
     },
     inventoryItem: {
-        type: mongoose.Schema.Types.ObjectId,
+        type: Schema.Types.ObjectId,
         ref: 'Inventory',
         required: true
     },
@@ -25,12 +26,19 @@ const saleSchema = new mongoose.Schema({
     },
     date: {
         type: Date,
-        default: Date.now
+        required: true
     },
     profit: {
         type: Number,
         required: true
-    }
+    },
+    batches: [{
+        type: Schema.Types.ObjectId,
+        ref: 'Batch',
+        required: true
+    }]
 });
 
-module.exports = mongoose.model('Sale', saleSchema);
+const Sale = mongoose.model('Sale', saleSchema);
+
+module.exports = Sale;
