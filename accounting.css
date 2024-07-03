@@ -1,0 +1,200 @@
+/* accounting.css */
+
+/* Global styles */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+}
+
+header {
+    background-color: #3C6D71;
+    color: #BEEF62;
+    padding: 1em;
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+    display: flex;
+    justify-content: space-between; /* Align items horizontally */
+}
+
+nav {
+    display: flex;
+    align-items: center;
+}
+
+.logo img {
+    width: 60px; /* Adjust as per your logo size */
+    height: auto;
+}
+
+.navbar ul {
+    list-style-type: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center; /* Push items to the right */
+}
+
+.navbar ul li {
+    margin-left: 20px; /* Adjust spacing between menu items */
+}
+
+.navbar ul li a {
+    text-decoration: none;
+    color: #BEEF62;
+    padding: 0.5em 1em;
+    transition: all 0.3s ease;
+}
+
+.navbar ul li a:hover {
+    background-color: #BEEF62;
+    color: black;
+    border-radius: 5px;
+}
+
+main {
+    margin-top: 80px; /* Adjust based on your header height */
+    padding: 2em;
+}
+
+section {
+    margin-bottom: 2em;
+}
+
+h2 {
+    color: #0056b3;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.dashboard-summary {
+    display: flex;
+    justify-content: space-around;
+    margin-bottom: 2em;
+}
+
+.summary-card {
+    background-color: #fff;
+    padding: 1em;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    flex: 1;
+}
+
+.charts {
+    display: flex;
+    justify-content: space-between;
+}
+
+.chart {
+    background-color: #fff;
+    padding: 1em;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-top: 1em;
+    flex: 1;
+}
+
+.income-table,
+.expenses-table {
+    margin-top: 2em;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #fff;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+thead {
+    background-color: #3C6D71;
+    color: #fff;
+}
+
+thead th,
+tbody td {
+    padding: 1em;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+.bank-accounts {
+    display: flex;
+    justify-content: space-around;
+}
+
+.bank-account {
+    background-color: #fff;
+    padding: 1em;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    flex: 1;
+    margin-bottom: 1em;
+}
+
+.transaction-history {
+    background-color: #fff;
+    padding: 1em;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+.payroll-summary,
+.taxes-summary {
+    background-color: #fff;
+    padding: 1em;
+    border-radius: 5px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    margin-bottom: 1em;
+}
+
+.reports-list {
+    display: flex;
+    justify-content: space-between;
+}
+
+.reports-list h3 {
+    color: #0056b3;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    margin-bottom: 0.5em;
+}
+
+.reports-list ul {
+    list-style-type: none;
+    padding: 0;
+}
+
+.reports-list ul li {
+    margin-bottom: 0.5em;
+}
+
+/* Responsive styles */
+@media (max-width: 768px) {
+    .navbar ul {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .navbar ul li {
+        margin-bottom: 10px;
+    }
+
+    .dashboard-summary,
+    .charts,
+    .bank-accounts {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .summary-card,
+    .chart,
+    .bank-account {
+        width: 100%;
+    }
+}

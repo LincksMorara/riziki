@@ -1,83 +1,16 @@
-function scrollToSection(sectionId) {
-    const section = document.getElementById(sectionId);
-    window.scrollTo({
-        top: section.offsetTop,
-        behavior: 'smooth'
-    });
-}
-
-window.addEventListener('scroll', function() {
-    var toolsSection = document.getElementById('tools');
-    var toolsList = document.querySelector('.tools_tool-list');
-
-    if (toolsSection.getBoundingClientRect().top <= 0) {
-        toolsList.classList.add('fixed-tools');
-    } else {
-        toolsList.classList.remove('fixed-tools');
-    }
-
-    var featureSections = document.querySelectorAll('.feature-section');
-
-    featureSections.forEach(function(section) {
-        var sectionTop = section.getBoundingClientRect().top;
-        if (sectionTop <= window.innerHeight / 2 && sectionTop > -section.offsetHeight / 2) {
-            var sectionId = section.getAttribute('id');
-            var backgroundColor;
-            switch (sectionId) {
-                case 'accounting':
-                    backgroundColor = '#E8FFF5'; // Accounting section background color (gold)
-                    break;
-                case 'data-analytics':
-                    backgroundColor = '#87CEEB'; // Data Analytics section background color (sky blue)
-                    break;
-                case 'profit-loss':
-                    backgroundColor = '#FF6347'; // Profit & Loss section background color (tomato)
-                    break;
-                case 'inventory':
-                    backgroundColor = '#3C6D71'; // Inventory section background color (lime green)
-                    break;
-                default:
-                    backgroundColor = 'white'; // Default background color
-            }
-            document.body.style.backgroundColor = backgroundColor;
-        }
-    });
-});
-
-document.getElementById('tax-time').addEventListener('click', function() {
-    document.getElementById('perks-image').src = '/Clients/images/tax.webp'; // Updated image path
-});
-
-document.getElementById('time-saving').addEventListener('click', function() {
-    document.getElementById('perks-image').src = '/Clients/images/Cashflow.png'; // Updated image path
-});
-
-document.getElementById('profitability').addEventListener('click', function() {
-    document.getElementById('perks-image').src = '/Clients/images/profit.jpeg'; // Updated image path
-});
-
-const faqs = document.querySelectorAll('.faq-question');
-faqs.forEach(faq => {
-    faq.addEventListener('click', function() {
-        const answer = document.getElementById('answer' + this.id.slice(-1));
-        if (answer.style.display === 'block') {
-            answer.style.display = 'none';
-        } else {
-            answer.style.display = 'block';
-        }
-    });
-});
-
 document.addEventListener('DOMContentLoaded', () => {
+    // Get form and button elements from the DOM
     const registerForm = document.getElementById('registerForm');
     const loginForm = document.getElementById('loginForm');
     const resetForm = document.getElementById('resetForm');
     const newPasswordForm = document.querySelector('#newPasswordForm');
     const logoutBtn = document.getElementById('logoutBtn');
 
+    // If the register form exists, add an event listener for form submission
     if (registerForm) {
         registerForm.addEventListener('submit', async (e) => {
             e.preventDefault(); // Prevent the form from submitting normally
+            // Get the input values from the form
             const firstName = document.getElementById('firstname').value;
             const lastName = document.getElementById('lastname').value;
             const username = document.getElementById('username').value;
@@ -87,165 +20,200 @@ document.addEventListener('DOMContentLoaded', () => {
             const password = document.getElementById('password').value;
             const confirmPassword = document.getElementById('confirmPassword').value;
 
+            // Check if the passwords match
             if (password !== confirmPassword) {
                 alert('Passwords do not match!');
-                return;
+                return; // Exit the function if passwords do not match
             }
 
             try {
+                // Send a POST request to the register API endpoint with the form data
                 const response = await fetch('http://localhost:3000/api/auth/register', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ firstName, lastName, phoneNumber, username, email, password, role }),
                 });
-
+            
+                // Parse the response data
                 const data = await response.json();
-
+            
+                // Check if the response was successful
                 if (response.ok) {
+                    // Show the response message
                     alert(data.message);
+                    // If the registration was successful, redirect to the login page
                     if (response.status === 201) {
-                        window.location.href = '/Clients/html/login.html'; // Updated redirect path
+                        window.location.href = 'login.html';
                     }
                 } else {
+                    // If the server responded with an error, show the error message
                     alert('Error: ' + data.message);
                 }
             } catch (error) {
+                // If an error occurred while sending the request, log the error and show an error message
                 console.error('An error occurred:', error);
                 alert('An error occurred while trying to register. Please try again.');
             }
         });
     }
 
+    // If the login form exists, add an event listener for form submission
     if (loginForm) {
         loginForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
+            e.preventDefault(); // Prevent the form from submitting normally
+            // Get the input values from the form
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
             try {
+                // Send a POST request to the login API endpoint with the form data
                 const response = await fetch('http://localhost:3000/api/auth/login', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email, password }),
                 });
-
+            
+                // If the response is ok, parse the data
                 if (response.ok) {
                     const data = await response.json();
+                    // Store the token in local storage
                     localStorage.setItem('token', data.token);
-                    window.location.href = '/Clients/html/dashboard.html'; // Updated redirect path
+                    // Redirect to the dashboard
+                    window.location.href = 'dashboard.html';
                 } else if (response.status === 401) {
+                    // If the status code is 401, show a custom message
                     alert('Login failed. Please check your email and password.');
                 } else {
+                    // If the response is not ok, try to parse the data and show an alert
                     try {
                         const data = await response.json();
                         alert(data.message || 'Login failed. Please check your email and password.');
                     } catch (error) {
+                        // If an error occurred when parsing the data, show a default message
                         alert('Login failed. Please check your email and password.');
                     }
                 }
             } catch (error) {
+                // If an error occurred while sending the request, log the error and show an error message
                 console.error('An error occurred:', error);
                 alert('Failed to login. Please check your network connection and try again.');
             }
         });
     }
 
+    // If the reset password request form exists, add an event listener for form submission
     if (resetForm) {
         resetForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const email = document.getElementById('email').value;
-
+            e.preventDefault(); // Prevent the form from submitting normally
+            const email = document.getElementById('email').value; // Get the input value from the form
+    
             try {
+                // Send a POST request to the forgot password API endpoint with the email
                 const response = await fetch('http://localhost:3000/api/auth/forgotpassword', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ email }),
                 });
-
-                const data = await response.json();
+    
+                const data = await response.json(); // Parse the response data
+                // Log the response data for debugging
                 console.log('Reset response:', data);
-
+    
                 if (response.status === 200) {
+                    // Store the email in local storage
                     localStorage.setItem('email', email);
+    
+                    // Show an alert and redirect to the forgot password page
                     alert('Please check your email for the reset code');
-                    window.location.href = '/Clients/html/forgotPassword.html'; // Updated redirect path
+                    window.location.href = 'forgotPassword.html';
                 } else {
+                    // If the server responded with an error, show the error message
                     alert('Error: ' + data.message);
                 }
             } catch (error) {
+                // If an error occurred while sending the request, log the error and show an error message
                 console.error('An error occurred:', error);
                 alert('An error occurred while trying to request a password reset. Please try again.');
             }
         });
     }
 
+    // If the forgot password form and reset code input exist, add an event listener for form submission
     const forgotPasswordForm = document.querySelector('#forgotPasswordForm');
     const resetCodeInput = document.querySelector('#resetCode');
 
     if (forgotPasswordForm && resetCodeInput) {
         forgotPasswordForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const resetToken = resetCodeInput.value;
+            e.preventDefault(); // Prevent the form from submitting normally
+            const resetToken = resetCodeInput.value; // Get the input value from the form
 
             try {
+                // Send a POST request to the validate reset token API endpoint with the reset token
                 const response = await fetch('http://localhost:3000/api/auth/validateresettoken', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ resetToken }),
+                    body: JSON.stringify({ resetToken }), // Removed email from the body as it's not needed
                 });
 
                 if (!response.ok) {
                     throw new Error(`Server responded with status ${response.status}`);
                 }
 
-                const data = await response.json();
+                const data = await response.json(); // Parse the response data
                 console.log(`Response: ${JSON.stringify(data)}`);
 
+                // Check if the response indicates success
                 if (data.success) {
+                    // Store the reset token in local storage
                     localStorage.setItem('resetToken', resetToken);
-                    window.location.href = '/Clients/html/resetPassword.html'; // Updated redirect path
+
+                    // Redirect to the reset password page
+                    window.location.href = 'resetPassword.html';
                 } else {
+                    // Show an error message if the token is invalid or expired
                     alert('Invalid or expired reset token.');
                 }
             } catch (error) {
+                // If an error occurred while sending the request, log the error and show an error message
                 console.error('An error occurred:', error);
                 alert('An error occurred. Check the console for more details.');
             }
         });
     }
 
-    const newPasswordForm = document.querySelector('#newPasswordForm');
-
+    // If the new password form exists, add an event listener for form submission
     if (newPasswordForm) {
         newPasswordForm.addEventListener('submit', async (e) => {
-            e.preventDefault();
-            const newPassword = document.getElementById('newPassword').value;
-            const confirmPassword = document.getElementById('confirmPassword').value;
-            const resetToken = localStorage.getItem('resetToken');
+            e.preventDefault(); // Prevent the form from submitting normally
+            const newPassword = document.getElementById('newPassword').value; // Get the input value from the form
+            const confirmPassword = document.getElementById('confirmPassword').value; // Get the input value from the form
+            const resetToken = localStorage.getItem('resetToken'); // Retrieve the reset token from local storage
 
-            console.log('Reset Token:', resetToken);
-            console.log('New Password:', newPassword);
+            console.log('Reset Token:', resetToken); // Log the reset token for debugging
+            console.log('New Password:', newPassword); // Log the new password for debugging
 
             if (newPassword === confirmPassword) {
                 try {
+                    // Send a PUT request to the reset password API endpoint with the new password and reset token
                     const response = await fetch('http://localhost:3000/api/auth/resetpassword', {
                         method: 'PUT',
                         headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify({ resetToken, newPassword }),
+                        body: JSON.stringify({ resetToken, newPassword }), // Send resetToken and newPassword in the body
                     });
 
-                    console.log('Response Status:', response.status);
+                    console.log('Response Status:', response.status); // Log the response status
 
-                    const data = await response.json();
-                    console.log('Response Data:', data);
+                    const data = await response.json(); // Parse the response data
+                    console.log('Response Data:', data); // Log the response data for debugging
 
                     if (response.ok && data.success) {
                         alert('Password reset successfully');
-                        window.location.href = '/Clients/html/login.html'; // Updated redirect path
+                        window.location.href = 'login.html';
                     } else {
                         alert('Error: ' + data.error);
                     }
                 } catch (error) {
+                    // If an error occurred while sending the request, log the error and show an error message
                     console.error('An error occurred:', error);
                     alert('Failed to reset password. Please try again.');
                 }
@@ -255,13 +223,14 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    const logoutBtn = document.getElementById('logoutBtn');
-
+    // If the logout button exists, add an event listener for click events
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
+            // Confirm the user wants to logout
             if (confirm('Are you sure you want to logout?')) {
+                // Remove the token from local storage and redirect to the login page
                 localStorage.removeItem('token');
-                window.location.href = '/Clients/html/login.html'; // Updated redirect path
+                window.location.href = 'login.html';
             }
         });
     }

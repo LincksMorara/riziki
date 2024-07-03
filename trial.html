@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Management Tools</title>
+<link rel="stylesheet" href="      trial.css">
+</head>
+<body>
+    <div class="user-profile-container">
+        <h2>User Profile</h2>
+        <div class="profile-details">
+            <div class="profile-image">
+                <img id="profile-img" src="profile-placeholder.png" alt="Profile">
+                <h3 id="user-name">Loading...</h3> <!-- Placeholder for username -->
+                <label for="file-upload" class="custom-file-upload">
+                    Upload Image
+                </label>
+                <input id="file-upload" type="file" accept="image/*">
+                <p id="upload-status" style="display: none;">Uploading...</p>
+                <p id="upload-error" style="display: none;"></p>
+            </div>
+            <div class="profile-info">
+                <p id="user-email">Email: Loading...</p> <!-- Placeholder for email -->
+                <!-- Separate section for profile update actions -->
+                <div class="profile-actions">
+                    <button onclick="handleChangePassword()">Change Password</button>
+                    <button onclick="handleChangePrimaryEmailAddress()">Change Primary Address</button> <!-- Corrected function name -->
+                    <button onclick="handleUpdatePaymentOptions()">Update Payment Options</button>
+                    <button onclick="navigateBack()">Back</button> <!-- Added back button -->
+                </div>
+            </div>
+        </div>
+    </div>
+    <script src="   trial.js"></script>
+</body>
+</html>

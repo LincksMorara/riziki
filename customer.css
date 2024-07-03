@@ -1,0 +1,140 @@
+/* customer.css */
+
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+}
+
+h1, h2, h3 {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: #0056b3;
+}
+
+.navbar-top {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    background-color: #3C6D71;
+    padding: 1em;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+.navbar-links {
+    display: flex;
+    margin-left: auto;
+    margin-right: 700px;
+}
+
+.navbar-top a {
+    color: #BEEF62;
+    text-decoration: none;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    padding: 0.5em;
+}
+
+.navbar-top a:hover {
+    background-color: #BEEF62;
+    color: black;
+    border: 2px solid #BEEF62;
+    border-radius: 35px;
+}
+
+.navbar-logo img {
+    border-radius: 0%;
+    width: 60px; /* Adjust the width as per your preference */
+    height: 40px; /* Adjust the height as per your preference */
+    margin-right: 10px;
+}
+
+.sidebar {
+    width: 250px;
+    background-color: #3C6D71;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    padding-top: 3.5em;
+    z-index: 999;
+}
+
+.sidebar .profile {
+    display: flex;
+    align-items: center;
+    padding: 1em;
+    border-bottom: 1px solid #BEEF62;
+}
+
+.sidebar .profile img {
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+    margin-right: 10px;
+}
+
+.sidebar .profile .username {
+    color: #fff;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.sidebar ul {
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.sidebar ul li {
+    border-bottom: 1px solid #BEEF62;
+}
+
+.sidebar ul li a {
+    color: #fff;
+    display: block;
+    padding: 1em;
+    text-decoration: none;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.sidebar ul li a:hover {
+    background-color: #BEEF62;
+    color: black;
+}
+
+.container {
+    margin-left: 250px; /* Adjust according to sidebar width */
+    padding: 2em;
+    margin-top: 4em;
+    background-color: #f4f4f4;
+    width: calc(100% - 250px);
+}
+
+h2 {
+    margin-top: 0;
+    font-size: 2em;
+}
+
+/* Styles for Search Bar and Table */
+#searchInput {
+    padding: 0.5em;
+    margin-bottom: 1em;
+}
+
+#customersTable {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+#customersTable th, #customersTable td {
+    padding: 0.5em;
+    border: 1px solid #ddd;
+    text-align: left;
+}
+
+#customersTable th {
+    background-color: #f2f2f2;
+}

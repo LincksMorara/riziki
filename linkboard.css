@@ -1,0 +1,205 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+}
+
+h1, h2, h3, h4 {
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    color: #0056b3;
+}
+
+.navbar-top {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #3C6D71;
+    padding: 1em;
+    position: fixed;
+    top: 0;
+    width: 100%;
+    z-index: 1000;
+    overflow-x: auto; /* Allow horizontal scrolling */
+}
+
+.navbar-links {
+    display: flex;
+    margin-right: 700px;
+    margin-left: 700px;
+    position: fixed;
+}
+
+.navbar-top a {
+    color: #BEEF62;
+    text-decoration: none;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    padding: 0.5em 1em;
+    white-space: nowrap; /* Prevent text wrapping */
+}
+
+.navbar-top a:hover {
+    background-color: #BEEF62;
+    color: black;
+    border: 2px solid #BEEF62;
+    border-radius: 35px;
+}
+
+.navbar-logo img {
+    height: 40px;
+}
+
+.navbar-profile {
+    display: flex;
+    align-items: center;
+}
+
+.navbar-profile button {
+    background-color: #0056b3;
+    margin-left: 600px;
+    color: #fff;
+    border: none;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+}
+
+.navbar-profile button:hover {
+    background-color: #007bff;
+}
+
+.sidebar {
+    position: fixed;
+    left: 0;
+    top: 60px; /* Adjust to fit the top navbar height */
+    width: 250px;
+    height: calc(100% - 60px); /* Adjust to fit the top navbar height */
+    background-color: #3C6D71;
+    padding-top: 20px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    z-index: 1000;
+}
+
+.sidebar a {
+    margin-top: 30px;
+    display: block;
+    color: #fff;
+    text-decoration: none;
+    padding: 10px 15px;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+.sidebar a:hover {
+    background-color: #0056b3;
+    color: #BEEF62;
+}
+
+.container {
+    margin-left: 250px; /* Adjust to fit the sidebar width */
+    padding: 2em;
+    margin-top: 80px; /* Adjust to fit the top navbar height */
+}
+
+.section {
+    margin-bottom: 2em;
+    padding: 1em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+}
+
+.section h3 {
+    margin-top: 0;
+    font-size: 1.5em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.dropdown {
+    padding: 0.5em;
+    font-size: 1em;
+}
+
+.piechart, .linechart {
+    width: 100%;
+    max-width: 400px;
+    height: 300px;
+    margin: 1em 0;
+}
+
+.expenses-list {
+    margin: 1em 0;
+}
+
+.expenses-list li {
+    margin: 0.5em 0;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+}
+
+/* Style the profit and loss, expenses, and sales segments */
+.segment-container {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: nowrap; /* Ensure no wrapping */
+    overflow-x: auto; /* Allow horizontal scrolling */
+}
+
+.segment {
+    flex: 0 0 30%; /* Flex basis set to 30% to fit three segments in a row */
+    margin: 1em;
+    padding: 1em;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    background-color: #f9f9f9;
+    box-sizing: border-box;
+}
+
+.segment h3 {
+    margin-top: 0;
+    font-size: 1.5em;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.segment .dropdown {
+    padding: 0.5em;
+    font-size: 0.7em;
+}
+
+.segment .total-figure {
+    font-size: 1.5em;
+    margin: 0.5em 0;
+}
+
+.segment .chart {
+    width: 100%;
+    max-width: 400px;
+    height: 300px;
+    margin: 1em 0;
+}
+
+/* Style for the expenses list */
+.expenses-list {
+    margin: 1em 0;
+    list-style-type: none;
+    padding: 0;
+}
+
+.expenses-list li {
+    margin: 0.5em 0;
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Style for the pie chart and line chart */
+.piechart, .linechart {
+    width: 100%;
+    max-width: 400px;
+    height: 300px;
+    margin: 1em 0;
+}

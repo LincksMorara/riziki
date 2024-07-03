@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linkboard</title>
+    <link rel="stylesheet" type="text/css" href="linkboard.css">
+</head>
+<body>
+
+    <div class="navbar-top">
+        <div class="navbar-logo">
+            <img src="images/riziki.png" alt="Riziki Logo">
+        </div>
+        <div class="navbar-links">
+            <a href="/html/#get-things-done">Get Things Done</a>
+            <a href="html/#business-overview">Business Overview</a>
+        </div>
+        <div class="navbar-profile">
+            <button onclick="redirectToUserProfile()">Profile</button>
+        </div>
+    </div>
+
+    <div class="sidebar">
+        <a href="linkboard.html">Dashboard</a>
+        <a href="banking.html">Banking</a>
+        <a href="customer.html">Customer & Leads</a>
+        <a href="cashflow.html">Cashflow</a>
+        <a href="expenses.html">Expenses</a>
+        <a href="reports.html">Reports</a>
+        <a href="accounting.html">Accounting</a>
+    </div>
+
+    <div class="container">
+        <div id="get-things-done">
+        </div>
+
+        <div id="business-overview">
+            <h2>Business Overview</h2>
+
+            <div class="segment-container">
+                <div class="segment">
+                    <h3>Profit and Loss
+                        <select class="dropdown">
+                            <option>Last 30 Days</option>
+                            <option>Last 6 Months</option>
+                            <option>Last 1 Year</option>
+                        </select>
+                    </h3>
+                </div>
+
+                <div class="segment">
+                    <h3>Expenses
+                        <select class="dropdown">
+                            <option>Last 30 Days</option>
+                            <option>Last 6 Months</option>
+                            <option>Last 1 Year</option>
+                        </select>
+                    </h3>
+                    <p class="total-figure">$1234.56</p>
+                    <ul class="expenses-list">
+                        <li>Expense 1 <span>$100.00</span></li>
+                        <li>Expense 2 <span>$200.00</span></li>
+                        <li>Expense 3 <span>$300.00</span></li>
+                    </ul>
+                    <div class="piechart" id="expenses-piechart"></div>
+                </div>
+
+                <div class="segment">
+                    <h3>Sales
+                        <select class="dropdown">
+                            <option>Last 30 Days</option>
+                            <option>Last 6 Months</option>
+                            <option>Last 1 Year</option>
+                        </select>
+                    </h3>
+                    <p class="total-figure">$5678.90</p>
+                    <div class="linechart" id="sales-linechart"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="main.js"></script>
+    <script>
+        function redirectToUserProfile() {
+            window.location.href = 'trial.html';
+        }
+    </script>
+</body>
+</html>

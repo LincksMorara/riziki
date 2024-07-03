@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Management Reports</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <link rel="stylesheet" href="      management-reports.css">
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+</head>
+<body>
+    <div class="navbar-top">
+        <div class="navbar-logo">
+            <img src="   images/riziki.png" alt="Logo">
+        </div>
+        <div class="navbar-links">
+            <a href="   reports.html">Standard</a>
+            <a href="   management-reports.html">Management Reports</a>
+            <a href="   custom-reports.html">Custom Reports</a>
+        </div>
+    </div>
+    <div class="sidebar">
+        <ul>
+            <li><a href="   linkboard.html">Dashboard</a></li>
+            <li><a href="  banking.html">Banking</a></li>
+            <li><a href="marketing.html">Customer & Leads</a></li>
+            <li><a href="   cashflow.html">Cashflow</a></li>
+            <li><a href="   expenses.html">Expenses</a></li>
+            <li><a href="   reports.html">Reports</a></li>
+            <li><a href="   accounting.html">Accounting</a></li>
+        </ul>
+    </div>
+    <div class="container">
+        <h2>Management Reports</h2>
+        <!-- Management Reports Section -->
+        <div class="management-reports">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Created By</th>
+                        <th>Last Modified</th>
+                        <th>Report Period</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Placeholder for management reports data -->
+                    <tr>
+                        <td>Management Report 1</td>
+                        <td>User A</td>
+                        <td>2023-07-01</td>
+                        <td>
+                            <select>
+                                <option>This Year</option>
+                                <option>2023</option>
+                                <!-- Add options for past years -->
+                            </select>
+                        </td>
+                        <td><button>View</button></td>
+                    </tr>
+                    <!-- Add more rows as needed -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <script src="      management-reports.js"></script>
+</body>
+</html>
