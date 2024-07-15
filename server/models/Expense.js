@@ -3,8 +3,10 @@ const mongoose = require('mongoose');
 
 // Define a schema for an expense, including the amount, description, and timestamp of the expense
 const expenseSchema = new mongoose.Schema({
-    amount: Number, // The amount of the expense
+    
     description: String, // A description of the expense
+    category: String,
+    amount: Number, // The amount of the expense
     timestamp: {type: Date, default: Date.now} // The timestamp of when the expense was created, defaulting to the current date and time
 });
 

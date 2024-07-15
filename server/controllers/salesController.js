@@ -166,6 +166,22 @@ exports.getSalesByDateRange = async (req, res) => {
     }
 };
 
+exports.getProfit = async (req, res) => {
+    const { startDate, endDate } = req.query;
+
+    try {
+        const sales = await Sale.find({
+            date: { $gte: new Date(startDate), $lte: new Date(endDate) }
+        });
+
+        const totalProfit = sales.reduce((acc, sale) => acc + sale.profit, 0);
+
+        res.status(200).json({ success: true, totalProfit });
+    } catch (error) {
+        res.status(500).json({ success: false, error: error.message });
+    }
+};
+
 // Get top buyers within a date range
 exports.getTopBuyers = async (req, res) => {
     const { startDate, endDate, limit } = req.query;

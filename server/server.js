@@ -8,6 +8,7 @@ const userRoutes = require('./routes/userRoutes');
 const inventoryRoutes = require('./routes/inventoryRoutes'); // Import inventoryRoutes
 const reportRoutes = require('./routes/reportRoutes'); // Import reportRoutes
 const salesRoutes = require('./routes/salesRoutes'); // Import salesRoutes
+const expensesRoutes = require('./routes/expensesRoutes'); //Import expensesRoutes
 const connectDB = require('./config/db');
 
 // Load environment variables from .env file
@@ -45,6 +46,10 @@ app.use('/api/inventory', inventoryRoutes);
 //use the salesRoutes for requests to /api/sales
 app.use('/api/sales', salesRoutes);
 
+//use the expensesRoutes for requests to /api/expenses
+app.use('/api/expenses', expensesRoutes);
+
+
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
@@ -52,7 +57,7 @@ app.use((err, req, res, next) => {
 });
 
 // Define the port the server will listen on
-const PORT = process.env.PORT || 5000;
+const PORT = process.env.PORT || 8000;
 
 // Start the server and listen on the defined port
 app.listen(PORT, () => {

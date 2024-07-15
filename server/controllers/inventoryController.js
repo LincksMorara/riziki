@@ -29,6 +29,7 @@ exports.addInventoryWithBatch = async (req, res) => {
             quantity: batchQuantity,
             supplier,
             pricePerKg: batchPricePerKg,
+            category, // Include category in the batch
             date: purchaseDate
         });
 
@@ -79,6 +80,36 @@ exports.getBatchDetails = async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 };
+
+exports.getBatchesByDateRange = async (req, res) => {
+    const { startDate, endDate } = req.query;
+  
+    // Parse the simple date format to a full ISO date string
+    const start = new Date(`${startDate}T00:00:00Z`);
+    const end = new Date(`${endDate}T23:59:59Z`);
+  
+    try {
+      // Fetch batches within the date range and populate inventoryItem
+      const batches = await Batch.find({
+        date: { $gte: start, $lte: end }
+      }).populate('inventoryItem');
+  
+      // Format the response
+      const formattedBatches = batches.map(batch => ({
+        date: batch.date.toISOString().split('T')[0], // Format the date as yyyy-mm-dd
+        supplier: batch.supplier,
+        inventoryItem: batch.inventoryItem.name, // Assuming Inventory model has a 'name' field
+        category: batch.category, // Include category in the response
+        quantity: batch.quantity,
+        pricePerKg: batch.pricePerKg,
+        totalPrice: batch.pricePerKg * batch.quantity
+      }));
+  
+      res.status(200).json({ success: true, data: formattedBatches });
+    } catch (error) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  };
 
 // Delete items from a batch of an inventory item
 exports.deleteItemsFromBatch = async (req, res) => {
