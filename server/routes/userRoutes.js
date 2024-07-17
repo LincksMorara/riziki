@@ -5,10 +5,13 @@ const express = require('express');
 const { protect, admin } = require('../middlewares/authMiddleware');
 
 // Destructure the getUserProfile and updateUserProfile functions from the userController module
-const { getAllUsers, deleteUser, updateUserByUsername, getUserProfile, updateUserProfile } = require('../controllers/userController');
+const { getAllUsers, deleteUser, updateUserByUsername, getUserProfile, updateUserProfile, loginUser } = require('../controllers/userController');
 
 // Create a new router object
 const router = express.Router();
+
+router.route('/login')
+    .post(loginUser);
 
 // User profile routes
 router.route('/profile')

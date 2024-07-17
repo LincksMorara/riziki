@@ -2,6 +2,8 @@
 // Import the User model to interact with the User collection in the database
 const User = require('../models/User'); 
 const sendEmail = require('../utils/emailUtility');
+const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 
 // Define a function to get the user profile
@@ -66,6 +68,45 @@ exports.getAllUsers = async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 };
+// POST /api/user/login
+exports.loginUser = async (req, res) => {
+    const { username, password } = req.body;
+  
+    try {
+      // Check if user exists
+      const user = await User.findOne({ username });
+      if (!user) {
+        return res.status(400).json({ success: false, message: 'Invalid credentials' });
+      }
+  
+      // Check password
+      const isMatch = await bcrypt.compare(password, user.password);
+      if (!isMatch) {
+        return res.status(400).json({ success: false, message: 'Invalid credentials' });
+      }
+  
+      // Generate JWT token
+      const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, {
+        expiresIn: '1h',
+      });
+  
+      res.status(200).json({
+        success: true,
+        data: {
+          _id: user._id,
+          firstName: user.firstName,
+          lastName: user.lastName,
+          username: user.username,
+          email: user.email,
+          role: user.role,
+        },
+        token,
+      });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ success: false, message: 'Server error' });
+    }
+  };
 
 // Define a function to delete a user by their username (admin only)
 exports.deleteUser = async (req, res) => {

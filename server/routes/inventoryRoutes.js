@@ -1,5 +1,6 @@
 const express = require('express');
 const router = express.Router();
+const upload = require('../middlewares/upload');
 const { protect, admin } = require('../middlewares/authMiddleware');
 const {
     addInventory,
@@ -16,17 +17,19 @@ const {
     addInventoryWithBatch,
     getBatchDetails,
     deleteItemsFromBatch,
-    getBatchesByDateRange
+    getBatchesByDateRange,
+    getInventoryById
 } = require('../controllers/inventoryController');
 
 // Routes for Inventory
-router.post('/', addInventoryWithBatch);
+router.post('/', upload.single('image'), addInventoryWithBatch);
 router.get('/', getInventoryDetails);
 router.post('/batches', getBatchDetails);
 router.delete('/batches', deleteItemsFromBatch);
 router.put('/:name', protect, admin, updateInventory);
 router.delete('/:name', protect, admin, deleteInventory);
 router.get('/', protect, getAllInventory);
+router.post('/getInventoryById', getInventoryById);
 
 //Routes for purchases
 router.get('/batches-by-date-range',getBatchesByDateRange);

@@ -25,9 +25,10 @@ const BusinessOverview = ({ onPeriodChange, setCustomData }) => {
 
         // Determine startDate based on the selected period
         if (period === 'daily') {
-          // For daily, set startDate to the start of the current day
+          // For daily, set startDate to the start of the previous day
           startDate = new Date(endDate);
-          startDate.setHours(0, 0, 0, 0);
+          startDate.setDate(endDate.getDate() - 1); // Subtract 1 day from current date
+          startDate.setHours(0, 0, 0, 0); // Set time to start of the day
         } else {
           // For weekly and monthly, adjust startDate accordingly
           switch (period) {
@@ -48,7 +49,7 @@ const BusinessOverview = ({ onPeriodChange, setCustomData }) => {
         const salesResponse = await axios.get(`http://localhost:8000/api/sales/sales-by-date-range?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`);
         const sales = salesResponse.data.sales;
         // Calculate total revenue and quantity from sales data
-        const totalRevenue = sales.reduce((acc, sale) => acc + sale.price, 0);
+        const totalRevenue = sales.reduce((acc, sale) => acc + (sale.price * sale.quantity), 0);
         const totalQuantity = sales.reduce((acc, sale) => acc + sale.quantity, 0);
         // Calculate total profit from sales data
         const totalProfit = sales.reduce((acc, sale) => acc + sale.profit, 0);

@@ -82,30 +82,31 @@ exports.verifyEmail = async (req, res) => {
 };
 
 // User login function
-exports.login = async(req, res) => {
-    // Destructure the request body to get the email and password
-    const {email, password} = req.body;
-    try{
-        // Try to find a user with the provided email
-        const user = await User.findOne({email});
-
-        // If no user was found, or the provided password does not match the user's password, send an error response
-        if(!user || !(await user.matchPassword(password))){
-            return res.status(401).json({success: false, error: 'Invalid credentials'});
-        }
-
-        // If the user was found and the password matches, sign a new JWT for the user
-        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {
-            expiresIn: process.env.JWT_EXPIRE,
-        });
-        
-        // Send a success response with the JWT(token sent in response body)
-        res.status(200).json({success: true, token});
+exports.login = async (req, res) => {
+    // Destructure the request body to get the username and password
+    const { username, password } = req.body;
+    try {
+      // Try to find a user with the provided username
+      const user = await User.findOne({ username });
+  
+      // If no user was found, or the provided password does not match the user's password, send an error response
+      if (!user || !(await user.matchPassword(password))) {
+        return res.status(401).json({ success: false, error: 'Invalid credentials' });
+      }
+  
+      // If the user was found and the password matches, sign a new JWT for the user
+      const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRE,
+      });
+  
+      // Send a success response with the JWT(token sent in response body) and username
+      res.status(200).json({ success: true, token, username: user.username, role: user.role });
     } catch (error) {
-        // If an error occurred, send an error response with the error message
-        res.status(500).json({success: false, error: error.message});
+      // If an error occurred, send an error response with the error message
+      res.status(500).json({ success: false, error: error.message });
     }
-};
+  };
+  
 
 // Forgot password
 exports.forgotPassword = async (req, res) => {

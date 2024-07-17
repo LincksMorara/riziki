@@ -5,49 +5,52 @@ const Sale = require('../models/Sale');
 // Controller function to add an inventory item with its initial batch or just a batch if the inventory item already exists
 exports.addInventoryWithBatch = async (req, res) => {
     const { name, category, batchQuantity, supplier, batchPricePerKg, purchaseDate, unitSize } = req.body;
-
+  
     try {
-        let inventory = await Inventory.findOne({ name, category });
-
-        if (!inventory) {
-            inventory = new Inventory({
-                name,
-                category,
-                quantity: batchQuantity,
-                unitSize // Ensure unitSize is included here only when creating a new inventory item
-            });
-
-            inventory = await inventory.save();
-        } else {
-            // Update the quantity of the existing inventory item
-            inventory.quantity += batchQuantity;
-            await inventory.save();
-        }
-
-        const newBatch = new Batch({
-            inventoryItem: inventory._id,
-            quantity: batchQuantity,
-            supplier,
-            pricePerKg: batchPricePerKg,
-            category, // Include category in the batch
-            date: purchaseDate
+      let inventory = await Inventory.findOne({ name, category });
+  
+      if (!inventory) {
+        const imageUrl = req.file ? path.join('/uploads', req.file.filename) : '';
+  
+        inventory = new Inventory({
+          name,
+          category,
+          quantity: batchQuantity,
+          unitSize, // Ensure unitSize is included here only when creating a new inventory item
+          image: imageUrl // Save the image URL
         });
-
-        const savedBatch = await newBatch.save();
-
-        res.status(201).json({ success: true, data: { inventory, batch: savedBatch } });
+  
+        inventory = await inventory.save();
+      } else {
+        // Update the quantity of the existing inventory item
+        inventory.quantity += batchQuantity;
+        await inventory.save();
+      }
+  
+      const newBatch = new Batch({
+        inventoryItem: inventory._id,
+        quantity: batchQuantity,
+        supplier,
+        pricePerKg: batchPricePerKg,
+        category, // Include category in the batch
+        date: purchaseDate
+      });
+  
+      const savedBatch = await newBatch.save();
+  
+      res.status(201).json({ success: true, data: { inventory, batch: savedBatch } });
     } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
+      res.status(500).json({ success: false, error: error.message });
     }
-};
+  };
 
 
 
-// Get Inventory Details
+// Get Inventory Details including image
 exports.getInventoryDetails = async (req, res) => {
     try {
-        // Fetch all inventory items from the database
-        const inventoryItems = await Inventory.find({}, 'name category quantity');
+        // Fetch all inventory items from the database including image field
+        const inventoryItems = await Inventory.find({}, 'name category quantity image');
 
         // Respond with the inventory items
         res.status(200).json({ success: true, data: inventoryItems });
@@ -95,21 +98,27 @@ exports.getBatchesByDateRange = async (req, res) => {
       }).populate('inventoryItem');
   
       // Format the response
-      const formattedBatches = batches.map(batch => ({
-        date: batch.date.toISOString().split('T')[0], // Format the date as yyyy-mm-dd
-        supplier: batch.supplier,
-        inventoryItem: batch.inventoryItem.name, // Assuming Inventory model has a 'name' field
-        category: batch.category, // Include category in the response
-        quantity: batch.quantity,
-        pricePerKg: batch.pricePerKg,
-        totalPrice: batch.pricePerKg * batch.quantity
-      }));
+      const formattedBatches = batches
+        .filter(batch => batch.inventoryItem) // Filter out batches with null inventoryItem
+        .map(batch => ({
+          date: batch.date.toISOString().split('T')[0], // Format the date as yyyy-mm-dd
+          supplier: batch.supplier,
+          inventoryItem: batch.inventoryItem.name, // Assuming Inventory model has a 'name' field
+          category: batch.category, // Include category in the response
+          quantity: batch.quantity,
+          pricePerKg: batch.pricePerKg,
+          totalPrice: batch.pricePerKg * batch.quantity * batch.inventoryItem.unitSize, // Calculate total price
+          unitSize: batch.inventoryItem.unitSize, // Include unitSize from the inventoryItem
+          batchId: batch._id // Include the batch ID
+        }));
   
       res.status(200).json({ success: true, data: formattedBatches });
     } catch (error) {
       res.status(500).json({ success: false, error: error.message });
     }
   };
+  
+  
 
 // Delete items from a batch of an inventory item
 exports.deleteItemsFromBatch = async (req, res) => {
@@ -284,6 +293,26 @@ exports.getAllSales = async (req, res) => {
         res.status(500).json({ success: false, error: error.message });
     }
 };
+
+// @desc    Get inventory details by ID
+// @route   POST /api/inventory/getInventoryById
+// @access  Public
+exports.getInventoryById = async (req, res) => {
+    try {
+      const { objectId } = req.body;
+  
+      // Fetch inventory item by ID
+      const inventoryItem = await Inventory.findById(objectId);
+  
+      if (!inventoryItem) {
+        return res.status(404).json({ success: false, error: 'Inventory item not found' });
+      }
+  
+      res.status(200).json({ success: true, data: inventoryItem });
+    } catch (error) {
+      res.status(500).json({ success: false, error: error.message });
+    }
+  };
 
 // Get sales for a specific date range
 exports.getSalesByDateRange = async (req, res) => {

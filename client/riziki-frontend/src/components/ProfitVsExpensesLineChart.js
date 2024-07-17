@@ -6,13 +6,13 @@ import dayjs from 'dayjs';
 const ProfitVsExpensesLineChart = () => {
   const chartRef = useRef(null);
   const chartInstanceRef = useRef(null);
-  const [intervalDays, setIntervalDays] = useState(4); // Default interval of 4 days
+  const [intervalDays, setIntervalDays] = useState(7); // Default interval of 7 days
 
   useEffect(() => {
     const fetchData = async () => {
       try {
         const endDate = dayjs();
-        const startDate = endDate.subtract(112, 'day');
+        const startDate = endDate.subtract(120, 'day'); // Fetch data for the last 120 days
 
         const formattedStartDate = startDate.format('YYYY-MM-DD');
         const formattedEndDate = endDate.format('YYYY-MM-DD');
@@ -25,35 +25,55 @@ const ProfitVsExpensesLineChart = () => {
         const salesResponse = await axios.get(`http://localhost:8000/api/sales/sales-by-date-range?startDate=${formattedStartDate}&endDate=${formattedEndDate}`);
         const salesData = salesResponse.data.sales || [];
 
+        // Generate an array of dates within the range
+        const dateRange = [];
+        for (let date = startDate; date.isBefore(endDate) || date.isSame(endDate); date = date.add(1, 'day')) {
+          dateRange.push(date.format('YYYY-MM-DD'));
+        }
+
+        // Create a mapping of date to profit and expenses
+        const profitMap = salesData.reduce((acc, sale) => {
+          const date = dayjs(sale.date).format('YYYY-MM-DD');
+          acc[date] = (acc[date] || 0) + sale.profit;
+          return acc;
+        }, {});
+
+        const expensesMap = expensesData.reduce((acc, expense) => {
+          const date = dayjs(expense.timestamp).format('YYYY-MM-DD');
+          acc[date] = (acc[date] || 0) + expense.amount;
+          return acc;
+        }, {});
+
         // Function to calculate cumulative data based on selected interval
-        const calculateCumulativeData = (data, interval, key) => {
+        const calculateCumulativeData = (dataMap, interval) => {
           const cumulativeData = [];
-          let cumulativeSum = 0;
-          for (let i = 0; i < data.length; i++) {
-            cumulativeSum += data[i][key];
-            if ((i + 1) % interval === 0 || i === data.length - 1) {
-              cumulativeData.push(cumulativeSum);
+          for (let i = 0; i < dateRange.length; i += interval) {
+            let intervalSum = 0;
+            for (let j = 0; j < interval; j++) {
+              const date = dateRange[i + j];
+              if (date) {
+                intervalSum += dataMap[date] || 0;
+              }
             }
+            cumulativeData.push(intervalSum);
           }
           return cumulativeData;
         };
 
         // Calculate cumulative profit and expenses based on selected interval
-        const cumulativeProfitData = calculateCumulativeData(salesData, intervalDays, 'profit');
-        const cumulativeExpensesData = calculateCumulativeData(expensesData, intervalDays, 'amount');
+        const cumulativeProfitData = calculateCumulativeData(profitMap, intervalDays);
+        const cumulativeExpensesData = calculateCumulativeData(expensesMap, intervalDays);
 
         // Prepare labels for the chart based on intervals
         const labels = [];
-        for (let i = intervalDays; i <= 112; i += intervalDays) {
+        for (let i = intervalDays; i <= 120; i += intervalDays) { // Adjusted to 120 days
           labels.push(`Day ${i}`);
         }
 
         // Determine aspect ratio based on interval
         let aspectRatio = 2; // Default aspect ratio (more wide than tall)
-        if (intervalDays === 1) {
-          aspectRatio = 3; // Wider than tall for 1 day interval
-        } else if (intervalDays === 2) {
-          aspectRatio = 2.5; // Moderately wide for 2 days interval
+        if (intervalDays === 7 || intervalDays === 14 || intervalDays === 30) {
+          aspectRatio = 1.5; // Narrower for 7, 14, and 30 days interval
         }
 
         // Prepare chart data with cumulative profit and expenses datasets
@@ -137,9 +157,9 @@ const ProfitVsExpensesLineChart = () => {
         {/* Dropdown to select interval */}
         <label htmlFor="intervalSelect">Select Interval:</label>
         <select id="intervalSelect" value={intervalDays} onChange={handleIntervalChange}>
-          <option value={4}>4 Days</option>
-          <option value={2}>2 Days</option>
-          <option value={1}>1 Day</option>
+          <option value={7}>7 Days</option>
+          <option value={14}>14 Days</option>
+          <option value={30}>30 Days</option>
         </select>
       </div>
     </div>

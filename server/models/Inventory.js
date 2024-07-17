@@ -17,6 +17,10 @@ const inventorySchema = new mongoose.Schema({
         type: Number,
         required: true
     },
+    image: {  // New field for storing image URL
+        type: String,  // Assuming you store the image URL as a string
+        default: ''    // Default empty string or null
+    },
     batches: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'Batch'
