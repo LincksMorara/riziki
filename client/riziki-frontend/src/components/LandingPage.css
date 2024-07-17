@@ -1,0 +1,48 @@
+/* src/components/LandingPage.css */
+.landing-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    height: 100vh;
+    background-color: white;
+    color: green;
+    font-family: Arial, sans-serif;
+  }
+  
+  .landing-header {
+    text-align: center;
+    margin-bottom: 2rem;
+  }
+  
+  .landing-main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .landing-buttons {
+    display: flex;
+    gap: 1rem;
+  }
+  
+  .landing-button {
+    padding: 1rem 2rem;
+    border: 2px solid green;
+    border-radius: 5px;
+    text-decoration: none;
+    color: green;
+    font-size: 1.2rem;
+    transition: background-color 0.3s, color 0.3s;
+  }
+  
+  .landing-button.signup:hover {
+    background-color: green;
+    color: white;
+  }
+  
+  .landing-button.login:hover {
+    background-color: green;
+    color: white;
+  }
+  

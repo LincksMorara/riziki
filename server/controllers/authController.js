@@ -3,62 +3,110 @@ const User = require('../models/User');
 const jwt = require('jsonwebtoken');
 const sendEmail =require('../utils/emailUtility');
 const crypto = require('crypto');
+const TempUser = require('../models/TempUser');
 
 
-// User registration function
-exports.register = async(req, res) => {
-    // Destructure the request body to get the user details
-    const {firstName, lastName, phoneNumber, username, email, password,role} = req.body;
+
+// Controller function to handle registration
+exports.register = async (req, res) => {
+    const { firstName, lastName, phoneNumber, username, email, password, role } = req.body;
+
     try {
-        // Try to create a new user with the provided details
-        const user = await User.create({
+        // Generate a verification token
+        const verificationToken = crypto.randomBytes(32).toString('hex');
+
+        // Store the user data temporarily (not in the main User collection)
+        const tempUser = new TempUser({
             firstName,
             lastName,
             phoneNumber,
             username,
             email,
             password,
-            role
+            role,
+            verificationToken
         });
 
-        // If the user is created successfully, sign a new JWT for the user
-        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {
-            expiresIn: process.env.JWT_EXPIRE,
-        });
+        await tempUser.save();
 
-        // Send a success response with the user details
-        res.status(201).json({success: true, user});
+        // Create the email content
+        const mailOptions = {
+            to: email,
+            subject: 'Verify your email',
+            text: `Your verification token is ${verificationToken}`
+        };
+
+        // Send the verification email
+        await sendEmail(mailOptions);
+
+        res.status(201).json({ message: 'User registered successfully. Please check your email for verification.' });
     } catch (error) {
-        // If an error occurred, send an error response with the error message
-        res.status(500).json({success: false, error: error.message});
+        console.error('Error registering user:', error);
+        res.status(500).json({ error: 'Internal server error' });
+    }
+};
+
+// Controller function to handle email verification
+exports.verifyEmail = async (req, res) => {
+    const { token } = req.body;
+
+    try {
+        // Find the user in the temporary storage by email and verification token
+        const tempUser = await TempUser.findOne({ verificationToken: token });
+
+        if (!tempUser) {
+            return res.status(400).json({ error: 'Invalid verification token.' });
+        }
+
+        // Create a new user instance
+        const user = new User({
+            firstName: tempUser.firstName,
+            lastName: tempUser.lastName,
+            phoneNumber: tempUser.phoneNumber,
+            username: tempUser.username,
+            email: tempUser.email,
+            password: tempUser.password,
+            role: tempUser.role,
+        });
+
+        await user.save();
+
+        // Remove the temporary user data
+        await TempUser.deleteOne({ token });
+
+        res.status(200).json({ message: 'Email verified successfully. You can now log in.' });
+    } catch (error) {
+        console.error('Error verifying email:', error);
+        res.status(500).json({ error: 'Internal server error' });
     }
 };
 
 // User login function
-exports.login = async(req, res) => {
-    // Destructure the request body to get the email and password
-    const {email, password} = req.body;
-    try{
-        // Try to find a user with the provided email
-        const user = await User.findOne({email});
-
-        // If no user was found, or the provided password does not match the user's password, send an error response
-        if(!user || !(await user.matchPassword(password))){
-            return res.status(401).json({success: false, error: 'Invalid credentials'});
-        }
-
-        // If the user was found and the password matches, sign a new JWT for the user
-        const token = jwt.sign({id: user._id}, process.env.JWT_SECRET, {
-            expiresIn: process.env.JWT_EXPIRE,
-        });
-        
-        // Send a success response with the JWT(token sent in response body)
-        res.status(200).json({success: true, token});
+exports.login = async (req, res) => {
+    // Destructure the request body to get the username and password
+    const { username, password } = req.body;
+    try {
+      // Try to find a user with the provided username
+      const user = await User.findOne({ username });
+  
+      // If no user was found, or the provided password does not match the user's password, send an error response
+      if (!user || !(await user.matchPassword(password))) {
+        return res.status(401).json({ success: false, error: 'Invalid credentials' });
+      }
+  
+      // If the user was found and the password matches, sign a new JWT for the user
+      const token = jwt.sign({ id: user._id, username: user.username }, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRE,
+      });
+  
+      // Send a success response with the JWT(token sent in response body) and username
+      res.status(200).json({ success: true, token, username: user.username, role: user.role });
     } catch (error) {
-        // If an error occurred, send an error response with the error message
-        res.status(500).json({success: false, error: error.message});
+      // If an error occurred, send an error response with the error message
+      res.status(500).json({ success: false, error: error.message });
     }
-};
+  };
+  
 
 // Forgot password
 exports.forgotPassword = async (req, res) => {
@@ -97,27 +145,6 @@ exports.forgotPassword = async (req, res) => {
     }
 };
 
-// Verify reset token
-exports.verifyResetToken = async (req, res) => {
-    const { token } = req.body;
-
-    const resetPasswordToken = crypto.createHash('sha256').update(token).digest('hex');
-
-    try {
-        const user = await User.findOne({
-            resetPasswordToken,
-            resetPasswordExpire: { $gt: Date.now() },
-        });
-
-        if (!user) {
-            return res.status(400).json({ success: false, error: 'Invalid or expired token' });
-        }
-
-        res.status(200).json({ success: true, data: 'Token is valid' });
-    } catch (error) {
-        res.status(500).json({ success: false, error: error.message });
-    }
-};
 
 // Validate reset token
 exports.validateResetToken = async (req, res) => {

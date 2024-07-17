@@ -5,14 +5,27 @@ const express = require('express');
 const { protect, admin } = require('../middlewares/authMiddleware');
 
 // Destructure the getUserProfile and updateUserProfile functions from the userController module
-const { getUserProfile, updateUserProfile } = require('../controllers/userController');
+const { getAllUsers, deleteUser, updateUserByUsername, getUserProfile, updateUserProfile, loginUser } = require('../controllers/userController');
 
 // Create a new router object
 const router = express.Router();
 
-// Define a GET route for '/profile' that uses the protect middleware and the getUserProfile function as its handlers
-// Define a PUT route for '/profile' that uses the protect middleware and the updateUserProfile function as its handlers
-router.route('/profile').get(protect, getUserProfile).put(protect, updateUserProfile);
+router.route('/login')
+    .post(loginUser);
+
+// User profile routes
+router.route('/profile')
+    .get(protect, getUserProfile)
+    .put(protect, updateUserProfile);
+
+// Admin routes
+router.route('/')
+    .get(protect, admin, getAllUsers);
+
+router.route('/:username')
+    .delete(protect, admin, deleteUser)
+    .put(protect, admin, updateUserByUsername);
+
 
 // Export the router object
 module.exports = router;
