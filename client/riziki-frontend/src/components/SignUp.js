@@ -32,7 +32,7 @@ const SignUp = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/register', formData);
+      const response = await axios.post('https://riziki-backend-ft22.onrender.com/api/auth/register', formData);
       setMessage('Registration successful. Please check your email for the verification token.');
       setShowVerificationForm(true);
     } catch (error) {
@@ -44,7 +44,7 @@ const SignUp = () => {
   const handleVerifyEmail = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/verifyemail', { token: verificationToken });
+      const response = await axios.post('https://riziki-backend-ft22.onrender.com/api/auth/verifyemail', { token: verificationToken });
       setMessage('Email verified successfully. Redirecting to login page...');
       setIsVerified(true);
       setTimeout(() => {
