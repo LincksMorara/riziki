@@ -46,7 +46,7 @@ const BusinessOverview = ({ onPeriodChange, setCustomData }) => {
         }
 
         // Fetch sales data from API
-        const salesResponse = await axios.get(`http://localhost:8000/api/sales/sales-by-date-range?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`);
+        const salesResponse = await axios.get(`https://riziki-backend-ft22.onrender.com/api/sales/sales-by-date-range?startDate=${startDate.toISOString()}&endDate=${endDate.toISOString()}`);
         const sales = salesResponse.data.sales;
         // Calculate total revenue and quantity from sales data
         const totalRevenue = sales.reduce((acc, sale) => acc + (sale.price * sale.quantity), 0);
@@ -57,7 +57,7 @@ const BusinessOverview = ({ onPeriodChange, setCustomData }) => {
         setRevenueData({ revenue: totalRevenue, quantity: totalQuantity, profit: totalProfit });
 
         // Fetch expenses data from API
-        const expensesResponse = await axios.get(`http://localhost:8000/api/expenses?startDate=${startDate.toISOString().split('T')[0]}&endDate=${endDate.toISOString().split('T')[0]}`);
+        const expensesResponse = await axios.get(`https://riziki-backend-ft22.onrender.com/api/expenses?startDate=${startDate.toISOString().split('T')[0]}&endDate=${endDate.toISOString().split('T')[0]}`);
         const expenses = expensesResponse.data.data;
         // Calculate total expenses amount
         const totalExpensesAmount = expenses.reduce((acc, expense) => acc + expense.amount, 0);
@@ -65,7 +65,7 @@ const BusinessOverview = ({ onPeriodChange, setCustomData }) => {
         setExpensesData({ totalAmount: totalExpensesAmount });
 
         // Fetch purchases data from API
-        const purchasesResponse = await axios.get(`http://localhost:8000/api/inventory/batches-by-date-range?startDate=${startDate.toISOString().split('T')[0]}&endDate=${endDate.toISOString().split('T')[0]}`);
+        const purchasesResponse = await axios.get(`https://riziki-backend-ft22.onrender.com/api/inventory/batches-by-date-range?startDate=${startDate.toISOString().split('T')[0]}&endDate=${endDate.toISOString().split('T')[0]}`);
         const purchases = purchasesResponse.data.data;
         // Calculate total purchases amount and quantity
         const totalPurchasesAmount = purchases.reduce((acc, purchase) => acc + purchase.totalPrice, 0);
