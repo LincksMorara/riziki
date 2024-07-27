@@ -22,7 +22,7 @@ const CreateUser = () => {
   const handleRegister = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/register', formData);
+      const response = await axios.post('https://riziki-backend-ft22.onrender.com/api/auth/register', formData);
       const { data } = response;
       if (data.message) {
         setMessage(data.message);
@@ -35,7 +35,7 @@ const CreateUser = () => {
   const handleVerifyEmail = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/verifyemail', {
+      const response = await axios.post('https://riziki-backend-ft22.onrender.com/api/auth/verifyemail', {
         token: verificationToken,
       });
       const { data } = response;
