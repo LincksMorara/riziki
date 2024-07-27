@@ -22,7 +22,7 @@ const NewPurchaseForm = () => {
       const startDateStr = startDate.toISOString().split('T')[0];
       const endDateStr = endDate.toISOString().split('T')[0];
 
-      const response = await axios.get(`http://localhost:8000/api/inventory/batches-by-date-range?startDate=${startDateStr}&endDate=${endDateStr}`);
+      const response = await axios.get(`https://riziki-backend-ft22.onrender.com/api/inventory/batches-by-date-range?startDate=${startDateStr}&endDate=${endDateStr}`);
       setPurchases(response.data.data); // Ensure the data is set correctly
     } catch (error) {
       console.error('Error fetching purchases:', error);
@@ -36,7 +36,7 @@ const NewPurchaseForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:3000/api/inventory', {
+      const response = await axios.post('https://riziki-backend-ft22.onrender.com/api/inventory', {
         name: productName,
         category: productCategory,
         batchQuantity: parseInt(batchQuantity),
