@@ -11,7 +11,7 @@ const InventoryList = () => {
   useEffect(() => {
     const fetchInventory = async () => {
       try {
-        const response = await axios.get('http://localhost:8000/api/inventory');
+        const response = await axios.get('https://riziki-backend-ft22.onrender.com/api/inventory');
         setInventory(response.data.data);
       } catch (error) {
         console.error('Error fetching inventory:', error);
