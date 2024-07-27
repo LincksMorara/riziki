@@ -12,7 +12,7 @@ const SignIn = ({ setUser }) => {
   const handleSignIn = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/api/auth/login', { username, password });
+      const response = await axios.post('https://riziki-backend-ft22.onrender.com/api/auth/login', { username, password });
       const { success, token, role } = response.data;
 
       if (success) {
