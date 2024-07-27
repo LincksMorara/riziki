@@ -18,11 +18,11 @@ const ProfitVsExpensesLineChart = () => {
         const formattedEndDate = endDate.format('YYYY-MM-DD');
 
         // Fetching expenses data
-        const expensesResponse = await axios.get(`http://localhost:8000/api/expenses?startDate=${formattedStartDate}&endDate=${formattedEndDate}`);
+        const expensesResponse = await axios.get(`https://riziki-backend-ft22.onrender.com/api/expenses?startDate=${formattedStartDate}&endDate=${formattedEndDate}`);
         const expensesData = expensesResponse.data.data || [];
 
         // Fetching sales data
-        const salesResponse = await axios.get(`http://localhost:8000/api/sales/sales-by-date-range?startDate=${formattedStartDate}&endDate=${formattedEndDate}`);
+        const salesResponse = await axios.get(`https://riziki-backend-ft22.onrender.com/api/sales/sales-by-date-range?startDate=${formattedStartDate}&endDate=${formattedEndDate}`);
         const salesData = salesResponse.data.sales || [];
 
         // Generate an array of dates within the range
