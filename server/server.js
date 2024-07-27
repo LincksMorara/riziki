@@ -19,7 +19,7 @@ const app = express();
 
 // Use cors middleware to enable CORS
 app.use(cors({
-    origin: true, // reflect the request origin
+    origin: 'https://riziki-frontend.onrender.com', // reflect the request origin
     methods: ['GET', 'POST','PUT'], // allow these methods
     allowedHeaders: ['Content-Type'], // allow this header
 }));
