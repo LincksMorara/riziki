@@ -8,18 +8,18 @@ const DateRangeSelector = ({ setCustomData }) => {
   const handleFetchData = async () => {
     try {
       // Fetch Sales Data
-      const salesResponse = await axios.get(`http://localhost:8000/api/sales/sales-by-date-range?startDate=${startDate}&endDate=${endDate}`);
+      const salesResponse = await axios.get(`https://riziki-backend-ft22.onrender.com/api/sales/sales-by-date-range?startDate=${startDate}&endDate=${endDate}`);
       const sales = salesResponse.data.sales;
       const totalRevenue = sales.reduce((acc, sale) => acc + sale.price, 0);
       const totalQuantity = sales.reduce((acc, sale) => acc + sale.quantity, 0);
 
       // Fetch Expenses Data
-      const expensesResponse = await axios.get(`http://localhost:8000/api/expenses?startDate=${startDate}&endDate=${endDate}`);
+      const expensesResponse = await axios.get(`https://riziki-backend-ft22.onrender.com/api/expenses?startDate=${startDate}&endDate=${endDate}`);
       const expenses = expensesResponse.data.data;
       const totalExpensesAmount = expenses.reduce((acc, expense) => acc + expense.amount, 0);
 
       // Fetch Purchases Data
-      const purchasesResponse = await axios.get(`http://localhost:8000/api/inventory/batches-by-date-range?startDate=${startDate}&endDate=${endDate}`);
+      const purchasesResponse = await axios.get(`https://riziki-backend-ft22.onrender.com/api/inventory/batches-by-date-range?startDate=${startDate}&endDate=${endDate}`);
       const purchases = purchasesResponse.data.data;
       const totalPurchasesAmount = purchases.reduce((acc, purchase) => acc + purchase.totalPrice, 0);
       const totalPurchasesQuantity = purchases.reduce((acc, purchase) => acc + purchase.quantity, 0);
