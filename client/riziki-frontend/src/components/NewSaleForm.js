@@ -20,7 +20,7 @@ const NewSaleForm = () => {
   }, []);
 
   const fetchInventory = () => {
-    fetch('http://localhost:8000/api/inventory')
+    fetch('https://riziki-backend-ft22.onrender.com/api/inventory')
       .then(response => response.json())
       .then(data => {
         if (data.success) {
