@@ -33,7 +33,7 @@ const NewExpenseForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('http://localhost:8000/api/expenses/add', {
+      const response = await axios.post('https://riziki-backend-ft22.onrender.com/api/expenses/add', {
         description: expenseDescription,
         amount: expenseAmount,
         category: expenseCategory
