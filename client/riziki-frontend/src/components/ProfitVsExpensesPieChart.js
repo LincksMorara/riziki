@@ -9,8 +9,8 @@ const ProfitVsExpensesPieChart = ({ startDate, endDate }) => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const profitResponse = await axios.get(`http://localhost:8000/api/sales/profit?startDate=${startDate}&endDate=${endDate}`);
-        const expensesResponse = await axios.get(`http://localhost:8000/api/expenses?startDate=${startDate}&endDate=${endDate}`);
+        const profitResponse = await axios.get(`https://riziki-backend-ft22.onrender.com/api/sales/profit?startDate=${startDate}&endDate=${endDate}`);
+        const expensesResponse = await axios.get(`https://riziki-backend-ft22.onrender.com/api/expenses?startDate=${startDate}&endDate=${endDate}`);
         const totalProfit = profitResponse.data.totalProfit || 0;
         const totalExpenses = expensesResponse.data.data.reduce((acc, expense) => acc + expense.amount, 0) || 0;
 
